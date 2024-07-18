@@ -2,9 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCP/IP Connection</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
-holaaaaaaaaaaaaaa
+<div class="container">
+    <div class="box">
+        <h2>Conexión por medio TCP / IP</h2>
+        <label for="available">Disponibles:</label>
+        <select id="available">
+            <option value="192.168.2.1:5004">192.168.2.1 - 5004</option>
+            <option value="127.0.0.1:5001">127.0.0.1 - 5001</option>
+            <option value="192.168.2.1:5005">192.168.2.1 - 5005</option>
+        </select>
+        <button id="connect" >Establecer conexión</button>
+        <button id="stop" disabled>Detener</button>
+    </div>
+    <div class="box">
+        <h2>Recepción de datos</h2>
+        <div class="status disconnected">
+            <i class="fas fa-arrow-up"></i>
+            <span id="valor_peso">-</span>
+        </div>
+
+        <div class="status disconnected">
+            <i class="fas fa-arrow-up"></i>
+            <span id="label_conectado">Desconectado</span>
+        </div>
+    </div>
+</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 </html>
