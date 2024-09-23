@@ -9,10 +9,25 @@ var available = document.getElementById('available');
 var stompClient = null;
 var username = null;
 
-var colors = [
-    '#2196F3', '#32c787', '#00BCD4', '#ff5652',
-    '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
-];
+document.addEventListener('DOMContentLoaded', function () {
+    cargarIPs();
+});
+
+function cargarIPs() {
+    fetch('/ips')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('available');
+            select.innerHTML = ''; // Limpiar el select actual
+            data.forEach(ip => {
+                const option = document.createElement('option');
+                option.value = ip;
+                option.text = ip.replace(':', ' - ');
+                select.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error al cargar las IPs:', error));
+}
 
 let host = '';
 let port = null;
@@ -104,4 +119,31 @@ btnConnect.addEventListener('click', connect, true);
 
 btnStop.addEventListener('click', disconnect, true);
 
+document.getElementById('agregar_ip').addEventListener('click', function () {
+    const nuevaIP = document.getElementById('nueva_ip').value;
+    const nuevoPuerto = document.getElementById('nuevo_puerto').value;
 
+    if (nuevaIP && nuevoPuerto) {
+        const ipCompleta = `${nuevaIP}:${nuevoPuerto}`;
+
+        fetch('/ips', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain'  // Cambiar a 'text/plain'
+            },
+            body: ipCompleta  // No se necesita JSON.stringify aquí
+        })
+            .then(response => {
+                if (response.ok) {
+                    cargarIPs(); // Recargar la lista de IPs
+                    document.getElementById('nueva_ip').value = ''; // Limpiar los campos
+                    document.getElementById('nuevo_puerto').value = '';
+                } else {
+                    alert('Error al agregar la IP');
+                }
+            })
+            .catch(error => alert('Error:' + error));
+    } else {
+        alert('Debe ingresar tanto la IP como el puerto');
+    }
+});

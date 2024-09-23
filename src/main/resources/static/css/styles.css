@@ -21,7 +21,7 @@ body {
 .box h2 {
     margin-top: 0;
 }
-.box select, .box button {
+.box select, .box button, .box input {
     width: 100%;
     padding: 10px;
     margin: 10px 0;

@@ -3,6 +3,7 @@ package com.conexiontcp.basculas.conexion;
 import com.conexiontcp.basculas.models.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -10,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,9 +26,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Controller
+@RestController
 public class ConexionController {
     private static List<Basculas> clientes = new CopyOnWriteArrayList<>();
+    private static List<String> listaIPs = new CopyOnWriteArrayList<>();
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
     private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10); // 10 hilos
@@ -38,6 +41,13 @@ public class ConexionController {
     @PostConstruct
     public void startSendingMessages() {
         executorService.scheduleAtFixedRate(this::llamado, 0, 1, TimeUnit.SECONDS);
+    }
+
+    static {
+        // Lista inicial de direcciones IP y puertos
+        listaIPs.add("192.168.2.1:5004");
+        listaIPs.add("127.0.0.1:5001");
+        listaIPs.add("192.168.2.1:5005");
     }
 
     private void llamado(){
@@ -215,6 +225,23 @@ public class ConexionController {
             System.out.println("ERROR AL DETENER CONEXION: " + e.getMessage());
             return false;
         }
+    }
+
+    @GetMapping("/ips")
+    public List<String> getIPs() {
+        return listaIPs;
+    }
+
+    @PostMapping("/ips")
+    public ResponseEntity<String> addIP(@RequestBody String nuevaIP) {
+        listaIPs.add(nuevaIP);
+        return ResponseEntity.ok("IP añadida");
+    }
+
+    @DeleteMapping("/ips")
+    public ResponseEntity<String> removeIP(@RequestBody String ipToRemove) {
+        listaIPs.remove(ipToRemove);
+        return ResponseEntity.ok("IP eliminada");
     }
 
 }
